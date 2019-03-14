@@ -1,6 +1,14 @@
 # Data-utils
 In an effort to simplify the AI's team work, this repo will be used to seamlessly acquire the data from the databases.
 
+## Usage
+```py
+import pandas as pd
+from s3.utils import read_data_s3
+
+dataframe = read_data_s3('Dkt_canada/data/sport_popularity/city_sport_2019-03-13_000.gz')
+```
+
 ### Versioning 
 The first version will have you copy the code into your own repo 
 
