@@ -22,5 +22,5 @@ from data_utils import s3
 s3.setup(aws_key=os.getenv('AWS_KEY'), secret_key=os.getenv('SECRET_KEY'), bucket=os.getenv('BUCKET'))
 
 # extract_to_csv will have the compression set to 'gzip' by default
-s3.extract_to_csv(link='put/in/your/link')
+s3.extract_to_csv(key='put/in/your/link', path='where/to/save/the/file')
 ```
