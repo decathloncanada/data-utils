@@ -45,3 +45,26 @@ def read_data_s3(file_path):
     )
 
     return data_frame
+
+
+def save_to_resources(filepath, data_frame):
+    """ Saves the data_frame to a specified filepath
+
+    Parameters:
+    filepath (string): The path where to save the .csv to
+    data_frame (DataFrame from pandas): The data frame with all the product's information
+
+    """
+    # If the resources directory doesn't exist, create it
+    if not os.path.exists(os.path.dirname(filepath)):
+        os.makedirs(os.path.dirname(filepath))
+
+    # If the .csv file doesn't exist, create it
+    if not os.path.exists(filepath):
+        file = open(filepath, mode="w")
+        file.close()
+
+    mdata = data_frame.fillna(0.0)
+
+    mdata.index = np.arange(1, len(mdata) + 1)
+    mdata.to_csv(filepath, index_label="id", sep=",", encoding="utf-8")
