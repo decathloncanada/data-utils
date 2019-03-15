@@ -14,4 +14,4 @@ dataframe = client.read_data_s3('Dkt_canada/data/sport_popularity/city_sport_201
 
 print(dataframe)
 
-# client.save_to_resources('./sports.csv', dataframe)
+# client.save_to_csv('./sports.csv', dataframe)

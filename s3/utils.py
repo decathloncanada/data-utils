@@ -50,7 +50,7 @@ class s3:
 
         return data_frame
 
-    def save_to_resources(self, filepath, data_frame):
+    def save_to_csv(self, filepath, data_frame):
         """ Saves the data_frame to a specified filepath
 
         Parameters:
