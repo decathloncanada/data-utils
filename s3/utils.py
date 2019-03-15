@@ -6,6 +6,7 @@ import io
 import os
 import boto3
 import pandas as pd
+import numpy as np
 
 # Setting up the variables for s3
 COMPRESSION = "gzip"
@@ -49,7 +50,7 @@ class s3:
 
         return data_frame
 
-    def save_to_resources(filepath, data_frame):
+    def save_to_resources(self, filepath, data_frame):
         """ Saves the data_frame to a specified filepath
 
         Parameters:

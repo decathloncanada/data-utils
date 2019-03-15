@@ -12,6 +12,6 @@ client = s3(aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
 
 dataframe = client.read_data_s3('Dkt_canada/data/sport_popularity/city_sport_2019-03-13_000.gz')
 
-print(
-    dataframe
-    )
+print(dataframe)
+
+# client.save_to_resources('./sports.csv', dataframe)
