@@ -7,6 +7,7 @@ import os
 import boto3
 import pandas as pd
 import numpy as np
+from import_export import resources
 
 # Setting up the variables for s3
 COMPRESSION = "gzip"
@@ -55,7 +56,7 @@ class s3:
 
         Parameters:
         filepath (string): The path where to save the .csv to
-        data_frame (DataFrame from pandas): The data frame with all the product's information
+        data_frame (DataFrame() from pandas): The data frame with all the product's information
 
         """
         # If the resources directory doesn't exist, create it
@@ -71,3 +72,32 @@ class s3:
 
         mdata.index = np.arange(1, len(mdata) + 1)
         mdata.to_csv(filepath, index_label="id", sep=",", encoding="utf-8")
+
+
+def django_import_csv_to_model(filepath, model, rewrite=False):
+    """ Writes the file at filepath to the model in the db
+
+    Parameters:
+    filepath (string): The path of the .csv file in ressources
+    model (Class): The model for the data to be set to
+    rewrite (bool), default=False: if True, it will delete the entries of the model in the db
+
+    """
+    # Verify it can delete the entries in the db
+    if rewrite:
+        try:
+            model.objects.all().delete()
+        except Exception as err:
+            return print(err)
+
+    # Verify it can open the csv
+    try:
+        with open(filepath) as csvfile:
+            reader = csv.reader(csvfile, delimiter=",")
+            headers = next(reader, None)
+            for row in reader:
+                p_resource = resources.modelresource_factory(model=model)()
+                dataset = tablib.Dataset(row, headers=headers)
+                p_resource.import_data(dataset, dry_run=False)
+    except Exception as err:
+        return print(err)
