@@ -13,6 +13,6 @@ client = s3(aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
             secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
             bucket=os.getenv("BUCKET"))
 
-dataframe = client.read_data_s3('Dkt_canada/data/sport_popularity/city_sport_%s_000.gz' % (YESTERDAY))
+dataframe = client.read_data_s3(key='Dkt_canada/data/sport_popularity/city_sport_%s_000.gz' % (YESTERDAY))
 
-client.save_to_csv('./sports.csv', dataframe)
+client.save_to_csv(filepath='./sports.csv', dataframe=dataframe)
