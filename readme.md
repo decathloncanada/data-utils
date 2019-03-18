@@ -8,12 +8,17 @@ import os
 import pandas as pd
 from s3.utils import s3
 
+from most_popular_product import Product
+
 client = s3(aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
             secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
             bucket=os.getenv("BUCKET"))
 
 dataframe = client.read_data_s3('Dkt_canada/data/sport_popularity/city_sport_2019-03-13_000.gz')
 client.save_to_csv('./sports.csv', dataframe)
+
+# Usage example in a django project
+client.django_import_csv_to_model('./sports.csv', Product, rewrite=True)
 ```
 
 #### This is what I envision the second version to be
