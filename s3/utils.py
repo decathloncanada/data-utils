@@ -7,8 +7,13 @@ import pandas as pd
 import numpy as np
 
 # If it's a django project
-if os.getenv('DJANGO_SETTINGS_MODULE'):
-    from import_export import resources
+
+
+def _setup_django():
+    if os.getenv('DJANGO_SETTINGS_MODULE'):
+        from import_export import resources
+    else:
+        raise Exception('This function can only be used in Django projects.')
 
 
 class s3:
@@ -53,10 +58,7 @@ class s3:
         df.to_csv(filepath, index_label='id', sep=',', encoding='utf-8')
 
     def convert_df_to_django_model(self, df, model, rewrite=False):
-        if not os.getenv('DJANGO_SETTINGS_MODULE'):
-            raise Exception(
-                'DJANGO_SETTINGS_MODULE is not set. This function is for Django projects.'
-            )
+        _setup_django()
 
         if rewrite:
             self._clear_model_table(model)
