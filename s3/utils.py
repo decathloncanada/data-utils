@@ -100,11 +100,11 @@ class s3:
 
 
 def _create_filepath_if_nonexistent(filepath):
-        # If the resources directory doesn't exist, create it
+    # If the directory doesn't exist, create it
     if not os.path.exists(os.path.dirname(filepath)):
         os.makedirs(os.path.dirname(filepath))
 
-    # If the .csv file doesn't exist, create it
+    # If the file doesn't exist, create it
     if not os.path.exists(filepath):
         file = open(filepath, mode='w')
         file.close()
