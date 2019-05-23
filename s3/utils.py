@@ -46,21 +46,11 @@ class s3:
         return df
 
     def save_to_csv(self, df, filepath='./'):
-        self._create_filepath_if_nonexistent(filepath)
+        _create_filepath_if_nonexistent(filepath)
 
         df.fillna(0.0, inplace=True)
         df.index = np.arange(1, len(df)+1)
         df.to_csv(filepath, index_label='id', sep=',', encoding='utf-8')
-
-    def _create_filepath_if_nonexistent(self, filepath):
-        # If the resources directory doesn't exist, create it
-        if not os.path.exists(os.path.dirname(filepath)):
-            os.makedirs(os.path.dirname(filepath))
-
-        # If the .csv file doesn't exist, create it
-        if not os.path.exists(filepath):
-            file = open(filepath, mode='w')
-            file.close()
 
     def convert_df_to_django_model(self, df, model, rewrite=False):
         if not os.getenv('DJANGO_SETTINGS_MODULE'):
@@ -107,3 +97,14 @@ class s3:
             model.objects.all().delete()
         except Exception as err:
             return print(err)
+
+
+def _create_filepath_if_nonexistent(filepath):
+        # If the resources directory doesn't exist, create it
+    if not os.path.exists(os.path.dirname(filepath)):
+        os.makedirs(os.path.dirname(filepath))
+
+    # If the .csv file doesn't exist, create it
+    if not os.path.exists(filepath):
+        file = open(filepath, mode='w')
+        file.close()
