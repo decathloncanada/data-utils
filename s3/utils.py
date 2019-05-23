@@ -13,16 +13,14 @@ class s3:
             aws_key,
             secret_key,
             bucket,
-            compression='gzip',
             region='EU-west-1'
     ):
         self._aws_key = aws_key
         self._secret_key = secret_key
         self._bucket = bucket
-        self._compression = compression
         self._region = region
 
-    def import_s3_csv_to_df(self, key, sep=';', header=0):
+    def import_s3_csv_to_df(self, key, sep=';', header=0, compression='gzip'):
         # Connect to the s3 bucket and extract the compressed csv at the key
         session = boto3.session.Session(region_name=self._region)
         s3client = session.client(
@@ -36,7 +34,7 @@ class s3:
             io.BytesIO(response['Body'].read()),
             sep=sep,
             header=header,
-            compression=self._compression
+            compression=compression
         )
 
         return df
