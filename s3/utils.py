@@ -6,15 +6,6 @@ import tablib
 import pandas as pd
 import numpy as np
 
-# If it's a django project
-
-
-def _setup_django():
-    if os.getenv('DJANGO_SETTINGS_MODULE'):
-        from import_export import resources
-    else:
-        raise Exception('This function can only be used in Django projects.')
-
 
 class s3:
     def __init__(
@@ -110,3 +101,10 @@ def _create_filepath_if_nonexistent(filepath):
     if not os.path.exists(filepath):
         file = open(filepath, mode='w')
         file.close()
+
+
+def _setup_django():
+    if os.getenv('DJANGO_SETTINGS_MODULE'):
+        from import_export import resources
+    else:
+        raise Exception('This function can only be used in Django projects.')
