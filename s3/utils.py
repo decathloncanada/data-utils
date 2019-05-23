@@ -22,7 +22,7 @@ class s3:
         self._compression = compression
         self._region = region
 
-    def import_s3_csv_to_df(self, key):
+    def import_s3_csv_to_df(self, key, sep=';', header=0):
         # Connect to the s3 bucket and extract the compressed csv at the key
         session = boto3.session.Session(region_name=self._region)
         s3client = session.client(
@@ -34,19 +34,24 @@ class s3:
 
         df = pd.read_csv(
             io.BytesIO(response['Body'].read()),
-            sep=';',
-            header=0,
+            sep=sep,
+            header=header,
             compression=self._compression
         )
 
         return df
 
-    def convert_df_to_csv(self, df, filepath='./'):
+    def convert_df_to_csv(self, df, filepath='./', index_label='id', sep=',', encoding='utf-8'):
         _create_filepath_if_nonexistent(filepath)
 
         df.fillna(0.0, inplace=True)
         df.index = np.arange(1, len(df)+1)
-        df.to_csv(filepath, index_label='id', sep=',', encoding='utf-8')
+        df.to_csv(
+            filepath,
+            index_label=index_label,
+            sep=sep,
+            encoding=encoding
+        )
 
     def convert_df_to_django_model(self, df, model, rewrite=False):
         _setup_django()
@@ -65,7 +70,7 @@ class s3:
 
             # Save the data to the database
             p_resource = resources.modelresource_factory(model=model)()
-            p_resource.import_data(dataset, dry_run=False)
+            p_resource.import_data(dataset)
         except Exception as err:
             return print(err)
 
