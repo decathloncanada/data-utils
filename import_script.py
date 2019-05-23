@@ -15,8 +15,8 @@ client = s3(
     bucket=os.getenv("BUCKET")
 )
 
-df = client.convert_s3_csv_to_df(
+df = client.import_s3_csv_to_df(
     key=f'Dkt_canada/data/sport_popularity/city_sport_{YESTERDAY}_000.gz'
 )
 
-client.save_to_csv(df, filepath='./sports.csv')
+client.convert_df_to_csv(df, filepath='./sports.csv')
