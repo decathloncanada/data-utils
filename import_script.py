@@ -19,4 +19,5 @@ df = client.import_s3_csv_to_df(
     key=f'Dkt_canada/data/sport_popularity/city_sport_{YESTERDAY}_000.gz'
 )
 
+
 client.convert_df_to_csv(df, filepath='./sports.csv')

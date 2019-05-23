@@ -1,23 +1,27 @@
 # Data-utils
 In an effort to simplify the AI's team work, this repo will be used to seamlessly acquire the data from the databases.
-For now, this module is for a specific use case where we retrieve data in csv format
 
-## Usage
+For now, this module is for a specific use case where we imports a compressed csv from an s3 bucket into a dataframe from pandas or csv format.
+
+Can also be used alongside django projects to import data inside of a specified model's table.
+
+## Usage Example
 ```py
 import os
-import pandas as pd
+from datetime import datetime, timedelta
+
 from s3.utils import s3
 
-from most_popular_product import Product
+YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
 
-client = s3(aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
-            secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-            bucket=os.getenv("BUCKET"))
+client = s3(
+    aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
+    secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    bucket=os.getenv("BUCKET")
+)
 
-dataframe = client.read_data_s3(key='Dkt_canada/data/sport_popularity/city_sport_2019-03-13_000.gz')
-
-client.save_to_csv(filepath='./sports.csv', dataframe=dataframe)
+df = client.read_data_s3(key=f'Dkt_canada/data/Product{YESTERDAY}.gz')
 
 # Usage example in a django project
-client.django_import_csv_to_model(filepath='./sports.csv', model=Product, rewrite=True)
+client.convert_df_to_django_model(df=df, model=Product, rewrite=True)
 ```
