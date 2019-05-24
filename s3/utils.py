@@ -77,7 +77,7 @@ class s3:
         # Change the dataframe into a dictionnary
         # because you can't change it into a Dataset directly
         df['id'] = range(last_id, last_id + len(df))
-        df.filna(0.0, inplace=True)
+        df.fillna(0.0, inplace=True)
         headers = list(df)
         df = df.to_dict('records')
 
