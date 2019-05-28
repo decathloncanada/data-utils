@@ -5,6 +5,11 @@ For now, this module is for a specific use case where we imports a compressed cs
 
 Can also be used alongside django projects to import data inside of a specified model's table.
 
+## Public functions
+`import_s3_csv_to_df`: takes in s3 credentials and a key and returns a dataframe
+`convert_df_to_csv`: saves a dataframe to a specified csv filepath
+`convert_df_to_django_model`: if you use this in a django project, you can directly save a df to a model's table
+
 ## Usage Example
 ```py
 import os
