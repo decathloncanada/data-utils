@@ -7,92 +7,92 @@ import pandas as pd
 import numpy as np
 
 
-class s3:
-    def __init__(
-            self,
-            aws_key,
-            secret_key,
-            bucket,
-            region='EU-west-1'
-    ):
-        self._aws_key = aws_key
-        self._secret_key = secret_key
-        self._bucket = bucket
-        self._region = region
+def import_s3_csv_to_df(
+        _aws_key,
+        _secret_key,
+        _bucket,
+        _region,
+        key,
+        sep=';',
+        header=0,
+        compression='gzip'
+):
+    # Connect to the s3 bucket and extract the compressed csv at the key
+    session = boto3.session.Session(region_name=_region)
+    s3client = session.client(
+        's3',
+        aws_access_key_id=_aws_key,
+        aws_secret_access_key=_secret_key,
+    )
+    response = s3client.get_object(Bucket=_bucket, Key=key)
 
-    def import_s3_csv_to_df(self, key, sep=';', header=0, compression='gzip'):
-        # Connect to the s3 bucket and extract the compressed csv at the key
-        session = boto3.session.Session(region_name=self._region)
-        s3client = session.client(
-            's3',
-            aws_access_key_id=self._aws_key,
-            aws_secret_access_key=self._secret_key,
-        )
-        response = s3client.get_object(Bucket=self._bucket, Key=key)
+    df = pd.read_csv(
+        io.BytesIO(response['Body'].read()),
+        sep=sep,
+        header=header,
+        compression=compression
+    )
 
-        df = pd.read_csv(
-            io.BytesIO(response['Body'].read()),
-            sep=sep,
-            header=header,
-            compression=compression
-        )
+    return df
 
-        return df
 
-    def convert_df_to_csv(self, df, filepath='./', index_label='id', sep=',', encoding='utf-8'):
-        _create_filepath_if_nonexistent(filepath)
+def convert_df_to_csv(df, filepath='./', index_label='id', sep=',', encoding='utf-8'):
+    _create_filepath_if_nonexistent(filepath)
 
-        df.fillna(0.0, inplace=True)
-        df.index = np.arange(1, len(df)+1)
-        df.to_csv(
-            filepath,
-            index_label=index_label,
-            sep=sep,
-            encoding=encoding
-        )
+    df.fillna(0.0, inplace=True)
+    df.index = np.arange(1, len(df)+1)
+    df.to_csv(
+        filepath,
+        index_label=index_label,
+        sep=sep,
+        encoding=encoding
+    )
 
-    def convert_df_to_django_model(self, df, model, rewrite=False):
-        _setup_django()
 
-        if rewrite:
-            self._clear_model_table(model)
+def convert_df_to_django_model(df, model, rewrite=False):
+    _setup_django()
 
-        try:
-            # Since Django's ORM uses incremental IDs by default
-            # we need to go and take the next 'available' one
-            # if the query returns none, then we start at 0
-            query = model.objects.values('id').order_by('-id').first()
-            last_id = query['id'] + 1 if query is not None else 0
+    if rewrite:
+        _clear_model_table(model)
 
-            dataset = self._convert_df_to_dataset(df, last_id)
+    try:
+        # Since Django's ORM uses incremental IDs by default
+        # we need to go and take the next 'available' one
+        # if the query returns none, then we start at 0
+        query = model.objects.values('id').order_by('-id').first()
+        last_id = query['id'] + 1 if query is not None else 0
 
-            # Save the data to the database
-            p_resource = resources.modelresource_factory(model=model)()
-            p_resource.import_data(dataset)
-        except Exception as err:
-            return print(err)
+        dataset = _convert_df_to_dataset(df, last_id)
 
-    def _convert_df_to_dataset(self, df, last_id):
-        # Set the new ids to start with the next available one
-        # Change the dataframe into a dictionnary
-        # because you can't change it into a Dataset directly
-        df['id'] = range(last_id, last_id + len(df))
-        df.fillna(0.0, inplace=True)
-        headers = list(df)
-        df = df.to_dict('records')
+        # Save the data to the database
+        p_resource = resources.modelresource_factory(model=model)()
+        p_resource.import_data(dataset)
+    except Exception as err:
+        return print(err)
 
-        # Put the Dataframe's data into a Dataset
-        dataset = tablib.Dataset()
-        dataset.headers = headers
-        dataset.dict = df
 
-        return dataset
+def _convert_df_to_dataset(df, last_id):
+    # Set the new ids to start with the next available one
+    # Change the dataframe into a dictionnary
+    # because you can't change it into a Dataset directly
+    df['id'] = range(last_id, last_id + len(df))
+    df.fillna(0.0, inplace=True)
+    headers = list(df)
+    df = df.to_dict('records')
 
-    def _clear_model_table(self, model):
-        try:
-            model.objects.all().delete()
-        except Exception as err:
-            return print(err)
+    # Put the Dataframe's data into a Dataset
+    dataset = tablib.Dataset()
+    dataset.headers = headers
+    dataset.dict = df
+
+    return dataset
+
+
+def _clear_model_table(model):
+    try:
+        model.objects.all().delete()
+    except Exception as err:
+        return print(err)
 
 
 def _create_filepath_if_nonexistent(filepath):
