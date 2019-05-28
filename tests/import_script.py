@@ -1,7 +1,7 @@
 import os
 
 from datetime import datetime, timedelta
-import s3.utils as du # du for data_utils
+import data_utils.utils as du # du for data_utils
 
 YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
 
