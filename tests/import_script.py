@@ -1,12 +1,3 @@
-# Data-utils
-In an effort to simplify the AI's team work, this repo will be used to seamlessly acquire the data from the databases.
-
-For now, this module is for a specific use case where we imports a compressed csv from an s3 bucket into a dataframe from pandas or csv format.
-
-Can also be used alongside django projects to import data inside of a specified model's table.
-
-## Usage Example
-```py
 import os
 
 from datetime import datetime, timedelta
@@ -24,4 +15,3 @@ df = du.import_s3_csv_to_df(
 
 
 du.convert_df_to_csv(df, filepath='./sports.csv')
-```
