@@ -5,23 +5,37 @@ For now, this module is for a specific use case where we imports a compressed cs
 
 Can also be used alongside django projects to import data inside of a specified model's table.
 
+## Installation
+The installation requires the [setuptools](https://github.com/pypa/setuptools) package to be installed on your computer
+
+• You will need to clone this project `git clone git@github.com:dktunited/data-utils.git`
+
+• then, you will need to run `python setup.py install`
+
+## Public functions
+• `import_s3_csv_to_df`: takes in s3 credentials and a key and returns a dataframe
+
+• `convert_df_to_csv`: saves a dataframe to a specified csv filepath
+
+• `convert_df_to_django_model`: if you use this in a django project, you can directly save a df to a model's table
+
 ## Usage Example
 ```py
 import os
-from datetime import datetime, timedelta
 
-from s3.utils import s3
+from datetime import datetime, timedelta
+import data_utils.utils as du # du for data_utils
 
 YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
 
-client = s3(
-    aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
-    secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-    bucket=os.getenv("BUCKET")
+df = du.import_s3_csv_to_df(
+    _aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
+    _secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    _bucket=os.getenv("BUCKET"),
+    _region='eu-west-1',
+    key=f'Dkt_canada/data/sport_popularity/city_sport_{YESTERDAY}_000.gz'
 )
 
-df = client.read_data_s3(key=f'Dkt_canada/data/Product{YESTERDAY}.gz')
 
-# Usage example in a django project
-client.convert_df_to_django_model(df=df, model=Product, rewrite=True)
+du.convert_df_to_csv(df, filepath='./sports.csv')
 ```
