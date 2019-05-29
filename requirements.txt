@@ -1,5 +1,6 @@
-boto3==1.9.103
-django-import-export==1.2.0
-numpy==1.16.2
-pandas==0.23.4
-python-dotenv==0.10.1
+boto3
+django-import-export
+numpy
+pandas
+python-dotenv
+scipy
