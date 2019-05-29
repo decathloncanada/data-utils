@@ -9,12 +9,15 @@ Can also be used alongside django projects to import data inside of a specified 
 The installation requires the [setuptools](https://github.com/pypa/setuptools) package to be installed on your computer
 
 • You will need to clone this project `git clone git@github.com:dktunited/data-utils.git`
+
 • then, you will need to run `python setup.py install`
 
 ## Public functions
-`import_s3_csv_to_df`: takes in s3 credentials and a key and returns a dataframe
-`convert_df_to_csv`: saves a dataframe to a specified csv filepath
-`convert_df_to_django_model`: if you use this in a django project, you can directly save a df to a model's table
+• `import_s3_csv_to_df`: takes in s3 credentials and a key and returns a dataframe
+
+• `convert_df_to_csv`: saves a dataframe to a specified csv filepath
+
+• `convert_df_to_django_model`: if you use this in a django project, you can directly save a df to a model's table
 
 ## Usage Example
 ```py
