@@ -18,7 +18,7 @@ The installation requires the [setuptools](https://github.com/pypa/setuptools) p
 - `convert_df_to_django_model`: if you use this in a django project, you can directly save a df to a model's table
 ##### `data_utils.geoloc`
 - `map_df_to_kd_tree`: map the dataframe to a kdtree, for faster 3d search
-- `calculate_haversine_distance`: clculates the great circle distance between two points on Earth
+- `calculate_haversine_distance`: calculates the great circle distance between two points on Earth
 
 ## Usage Example
 ```py
