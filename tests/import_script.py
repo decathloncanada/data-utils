@@ -1,11 +1,16 @@
 import os
-
 from datetime import datetime, timedelta
-import data_utils.utils as du # du for data_utils
+
+from dotenv import load_dotenv
+
+import data_utils as du  # du for data_utils
+
+load_dotenv()
+
 
 YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
 
-df = du.import_s3_csv_to_df(
+df = du.df.import_s3_csv_to_df(
     _aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
     _secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
     _bucket=os.getenv("BUCKET"),
@@ -14,4 +19,4 @@ df = du.import_s3_csv_to_df(
 )
 
 
-du.convert_df_to_csv(df, filepath='./sports.csv')
+du.df.convert_df_to_csv(df, filepath='./sports.csv')

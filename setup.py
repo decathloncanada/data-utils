@@ -6,7 +6,7 @@ with open("readme.md", "r") as desc:
 
 setup(
     name="data_utils",
-    version="0.1",
+    version="0.2",
     author="Shawn-Philippe Levasseur",
     author_email="shawnphilippe.levasseur@decathlon.com",
     description="An s3 utility package",

@@ -28,7 +28,7 @@ def map_df_to_kd_tree(df):
 def calculate_haversine_distance(df, latitude, longitude):
     """
     Calculate the great circle distance between two points
-    on the earth (specified in decimal degrees)
+    on Earth (specified in decimal degrees)
 
     Usage:
         df['distance'] = df.apply(distance_haversine, args=(latitude, longitude), axis=1)
