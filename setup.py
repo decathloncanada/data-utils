@@ -6,10 +6,10 @@ with open("readme.md", "r") as desc:
 
 setup(
     name="data_utils",
-    version="0.1",
+    version="0.2",
     author="Shawn-Philippe Levasseur",
     author_email="shawnphilippe.levasseur@decathlon.com",
-    description="An s3 utility package",
+    description="A data manipulation library",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dktunited/data-utils",
@@ -24,6 +24,7 @@ setup(
         "django-import-export",
         "numpy",
         "pandas",
-        "tablib"
+        "tablib",
+        "scipy"
     ]
 )
