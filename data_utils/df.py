@@ -58,8 +58,8 @@ def convert_df_to_s3_compressed_csv(
         compression='gzip'
 ):
     """
-    Recieves a dataframe and compress it into a csv
-    to the put it inside s3 with the specified bucket and key
+    Receives a dataframe and compress it into a csv
+    to the put it in the bucket at the key
 
     :df: pandas.DataFrame to convert into a compressed csv
     :s3client: boto3.session.Session.client that represents a connection with s3
