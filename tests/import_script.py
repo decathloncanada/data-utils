@@ -26,5 +26,4 @@ df = du.import_s3_csv_to_df(
     key=f'Dkt_canada/shawn_test/test_000.gz'
 )
 
-
 du.convert_df_to_csv(df, filepath='./sports.csv')

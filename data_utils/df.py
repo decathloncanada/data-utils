@@ -43,6 +43,11 @@ def import_s3_csv_to_df(
         compression=compression
     )
 
+    try:
+        df.drop('id', inplace=True, axis=1)
+    except KeyError:
+        pass
+
     return df
 
 
@@ -83,7 +88,6 @@ def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8',
 
     df.fillna(0.0, inplace=True)
     df.index = np.arange(1, len(df)+1)
-    df = df.loc[:, ~df.columns.duplicated()]
     df.to_csv(
         filepath,
         index_label=index_label,
