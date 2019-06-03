@@ -21,6 +21,18 @@ def import_s3_csv_to_df(
         header=0,
         compression='gzip'
 ):
+    """
+    Import a given dataframe to Django's ORM with a specified model
+
+    :_aws_key: string representing the s3 bucket's access key
+    :_secret_key: string representing the s3 bucket's secret key
+    :_bucket: string representing the s3 bucket's name
+    :_region: string representing the s3 bucket's region
+    :key: string representing the filepath in the s3 bucket
+    :sep: string representing the seperation in the compressed csv, default: ';'
+    :header: row number to use as the column names, default: 0
+    :compression: string representing the type of compression on the file, default: 'gzip'
+    """
     # Connect to the s3 bucket and extract the compressed csv at the key
     session = boto3.session.Session(region_name=_region)
     s3client = session.client(
@@ -41,6 +53,16 @@ def import_s3_csv_to_df(
 
 
 def convert_df_to_csv(df, filepath='./', index_label='id', sep=',', encoding='utf-8'):
+    """
+    Convert a given dataframe to a csv at the filepath using
+    the other arguments sa specifications
+
+    :df: pandas.Dataframe to convert
+    :filepath: string representing what path to save the csv to, default: '.'
+    :index_label: string representing the column label for the index column, default: 'id'
+    :sep: string representing the wanted seperation in the csv, default: ','
+    :encoding: string representing the encoding to use in the output file, default: 'utf-8'
+    """
     _create_filepath_if_nonexistent(filepath)
 
     df.fillna(0.0, inplace=True)
@@ -54,6 +76,13 @@ def convert_df_to_csv(df, filepath='./', index_label='id', sep=',', encoding='ut
 
 
 def convert_df_to_django_model(df, model, rewrite=False):
+    """
+    Import a given dataframe to Django's ORM with a specified model
+
+    :df: pandas.Dataframe to convert
+    :model: django.db.models.Model's name. The ORM takes care of which table to put the data in
+    :rewrite: boolean representing wether to delete the old entries or not, default: False
+    """
     _setup_django()
 
     if rewrite:
