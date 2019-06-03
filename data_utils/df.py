@@ -25,10 +25,8 @@ def import_s3_csv_to_df(
     """
     Import a given dataframe to Django's ORM with a specified model
 
-    :_aws_key: string representing the s3 bucket's access key
-    :_secret_key: string representing the s3 bucket's secret key
-    :_bucket: string representing the s3 bucket's name
-    :_region: string representing the s3 bucket's region
+    :s3client: boto3.session.Session.client that represents a connection with s3
+    :bucket: string representing the s3 bucket's name
     :key: string representing the filepath in the s3 bucket
     :sep: string representing the seperation in the compressed csv, default: ';'
     :header: row number to use as the column names, default: 0
@@ -55,14 +53,24 @@ def df_to_s3_compressed_csv(
         df,
         s3client,
         bucket,
-        key
+        key,
+        sep=';',
+        compression='gzip'
 ):
     """
-    Takes a dataframe and put it inside the specified path in s3
+    Recieves a dataframe and compress it into a csv
+    to the put it inside s3 with the specified bucket and key
+
+    :df: pandas.DataFrame to convert into a compressed csv
+    :s3client: boto3.session.Session.client that represents a connection with s3
+    :bucket: string representing the s3 bucket's name
+    :key: string representing the filepath in the s3 bucket
+    :sep: string representing the seperation in the compressed csv, default: ';'
+    :compression: string representing the type of compression on the file, default: 'gzip'
     """
     tmp_file = './tmp_gzip_csv'
 
-    convert_df_to_csv(df, filepath=tmp_file, sep=';', compression='gzip')
+    convert_df_to_csv(df, filepath=tmp_file, sep=sep, compression=compression)
 
     s3client.upload_file(
         Filename=tmp_file,
