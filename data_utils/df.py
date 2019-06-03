@@ -49,7 +49,7 @@ def import_s3_csv_to_df(
     return df
 
 
-def df_to_s3_compressed_csv(
+def convert_df_to_s3_compressed_csv(
         df,
         s3client,
         bucket,

@@ -13,9 +13,10 @@ The installation requires the [setuptools](https://github.com/pypa/setuptools) p
 
 ## Public functions
 ##### `data_utils.df`
-- `import_s3_csv_to_df`: takes in s3 credentials and a key and returns a dataframe
+- `import_s3_csv_to_df`: takes in an s3 client and a key and returns a dataframe
 - `convert_df_to_csv`: saves a dataframe to a specified csv filepath
 - `convert_df_to_django_model`: if you use this in a django project, you can directly save a df to a model's table
+- `convert_df_to_s3_compressed_csv`: takes in an s3 client and a df and saves it in s3 as a compressed csv
 ##### `data_utils.geoloc`
 - `map_df_to_kd_tree`: map the dataframe to a kdtree, for faster 3d search
 - `calculate_haversine_distance`: calculates the great circle distance between two points on Earth

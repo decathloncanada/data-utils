@@ -5,7 +5,7 @@ import pandas as pd
 import boto3
 from dotenv import load_dotenv
 
-from data_utils.df import df_to_s3_compressed_csv
+from data_utils.df import convert_df_to_s3_compressed_csv
 
 load_dotenv()
 YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
@@ -21,7 +21,7 @@ s3client = session.client(
 data = {'col1': [1, 2], 'col2': [3, 4]}
 df = pd.DataFrame(data=data)
 
-df_to_s3_compressed_csv(
+convert_df_to_s3_compressed_csv(
     df,
     s3client=s3client,
     bucket=os.getenv("BUCKET"),
