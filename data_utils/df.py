@@ -1,6 +1,9 @@
+import os
+import io
+from gzip import compress
+
 import pandas as pd
 import numpy as np
-import io
 import boto3
 
 from .utils import (
@@ -12,10 +15,8 @@ from .utils import (
 
 
 def import_s3_csv_to_df(
-        _aws_key,
-        _secret_key,
-        _bucket,
-        _region,
+        s3client,
+        bucket,
         key,
         sep=';',
         header=0,
@@ -33,14 +34,7 @@ def import_s3_csv_to_df(
     :header: row number to use as the column names, default: 0
     :compression: string representing the type of compression on the file, default: 'gzip'
     """
-    # Connect to the s3 bucket and extract the compressed csv at the key
-    session = boto3.session.Session(region_name=_region)
-    s3client = session.client(
-        's3',
-        aws_access_key_id=_aws_key,
-        aws_secret_access_key=_secret_key,
-    )
-    response = s3client.get_object(Bucket=_bucket, Key=key)
+    response = s3client.get_object(Bucket=bucket, Key=key)
 
     df = pd.read_csv(
         io.BytesIO(response['Body'].read()),
@@ -52,13 +46,35 @@ def import_s3_csv_to_df(
     return df
 
 
-def convert_df_to_csv(df, filepath='./', index_label='id', sep=',', encoding='utf-8'):
+def df_to_s3_compressed_csv(
+        df,
+        s3client,
+        bucket,
+        key
+):
+    """
+    Takes a dataframe and put it inside the specified path in s3
+    """
+    tmp_file = './tmp_gzip_csv'
+
+    convert_df_to_csv(df, filepath=tmp_file, sep=';', compression='gzip')
+
+    s3client.upload_file(
+        Filename=tmp_file,
+        Bucket=bucket,
+        Key=key,
+    )
+
+    os.remove('./tmp_gzip_csv')
+
+
+def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8', compression=None):
     """
     Convert a given dataframe to a csv at the filepath using
     the other arguments sa specifications
 
     :df: pandas.Dataframe to convert
-    :filepath: string representing what path to save the csv to, default: '.'
+    :filepath: string representing what path to save the csv to
     :index_label: string representing the column label for the index column, default: 'id'
     :sep: string representing the wanted seperation in the csv, default: ','
     :encoding: string representing the encoding to use in the output file, default: 'utf-8'
@@ -67,11 +83,13 @@ def convert_df_to_csv(df, filepath='./', index_label='id', sep=',', encoding='ut
 
     df.fillna(0.0, inplace=True)
     df.index = np.arange(1, len(df)+1)
+    df = df.loc[:, ~df.columns.duplicated()]
     df.to_csv(
         filepath,
         index_label=index_label,
         sep=sep,
-        encoding=encoding
+        encoding=encoding,
+        compression=compression
     )
 
 

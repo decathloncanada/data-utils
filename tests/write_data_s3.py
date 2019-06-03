@@ -1,16 +1,14 @@
 import os
 from datetime import datetime, timedelta
 
-from dotenv import load_dotenv
+import pandas as pd
 import boto3
+from dotenv import load_dotenv
 
-import data_utils.df as du  # du for data_utils
+from data_utils.df import df_to_s3_compressed_csv
 
 load_dotenv()
-
-
 YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
-
 
 # Connect to the s3 bucket and extract the compressed csv at the key
 session = boto3.session.Session(region_name='eu-west-1')
@@ -20,11 +18,12 @@ s3client = session.client(
     aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
 )
 
-df = du.import_s3_csv_to_df(
+data = {'col1': [1, 2], 'col2': [3, 4]}
+df = pd.DataFrame(data=data)
+
+df_to_s3_compressed_csv(
+    df,
     s3client=s3client,
     bucket=os.getenv("BUCKET"),
     key=f'Dkt_canada/shawn_test/test_000.gz'
 )
-
-
-du.convert_df_to_csv(df, filepath='./sports.csv')
