@@ -1,5 +1,4 @@
 import os
-from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 import boto3
@@ -7,10 +6,6 @@ import boto3
 import data_utils.df as du  # du for data_utils
 
 load_dotenv()
-
-
-YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
-
 
 # Connect to the s3 bucket and extract the compressed csv at the key
 session = boto3.session.Session(region_name='eu-west-1')
@@ -26,4 +21,4 @@ df = du.import_s3_csv_to_df(
     key=f'Dkt_canada/shawn_test/test_000.gz'
 )
 
-du.convert_df_to_csv(df, filepath='./sports.csv')
+du.convert_df_to_csv(df, filepath='./test.csv')

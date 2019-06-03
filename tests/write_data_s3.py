@@ -1,5 +1,4 @@
 import os
-from datetime import datetime, timedelta
 
 import pandas as pd
 import boto3
@@ -8,7 +7,6 @@ from dotenv import load_dotenv
 from data_utils.df import convert_df_to_s3_compressed_csv
 
 load_dotenv()
-YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
 
 # Connect to the s3 bucket and extract the compressed csv at the key
 session = boto3.session.Session(region_name='eu-west-1')

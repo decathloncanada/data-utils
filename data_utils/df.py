@@ -1,10 +1,8 @@
 import os
 import io
-from gzip import compress
 
 import pandas as pd
 import numpy as np
-import boto3
 
 from .utils import (
     _clear_model_table,
@@ -41,6 +39,8 @@ def import_s3_csv_to_df(
         compression=compression
     )
 
+    # drop duplicate to fix
+    # duplicate 'id' column in the df
     try:
         df.drop('id', inplace=True, axis=1)
     except KeyError:
