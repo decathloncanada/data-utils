@@ -25,19 +25,26 @@ The installation requires the [setuptools](https://github.com/pypa/setuptools) p
 ```py
 import os
 
-from datetime import datetime, timedelta
-import data_utils as du # du for data_utils
+from dotenv import load_dotenv
+import boto3
 
-YESTERDAY = (datetime.today() - timedelta(1)).strftime("%Y-%m-%d")
+import data_utils.df as du  # du for data_utils
 
-df = du.df.import_s3_csv_to_df(
-    _aws_key=os.getenv("AWS_ACCESS_KEY_ID"),
-    _secret_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-    _bucket=os.getenv("BUCKET"),
-    _region='eu-west-1',
-    key=f'Dkt_canada/data/sport_popularity/city_sport_{YESTERDAY}_000.gz'
+load_dotenv()
+
+# Connect to the s3 bucket and extract the compressed csv at the key
+session = boto3.session.Session(region_name='eu-west-1')
+s3client = session.client(
+    's3',
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
 )
 
+df = du.import_s3_csv_to_df(
+    s3client=s3client,
+    bucket=os.getenv("BUCKET"),
+    key=f'Dkt_canada/shawn_test/test_000.gz'
+)
 
-du.df.convert_df_to_csv(df, filepath='./sports.csv')
+du.convert_df_to_csv(df, filepath='./test.csv')
 ```
