@@ -1,7 +1,8 @@
+import os
+import io
+
 import pandas as pd
 import numpy as np
-import io
-import boto3
 
 from .utils import (
     _clear_model_table,
@@ -12,10 +13,8 @@ from .utils import (
 
 
 def import_s3_csv_to_df(
-        _aws_key,
-        _secret_key,
-        _bucket,
-        _region,
+        s3client,
+        bucket,
         key,
         sep=';',
         header=0,
@@ -24,23 +23,14 @@ def import_s3_csv_to_df(
     """
     Import a given dataframe to Django's ORM with a specified model
 
-    :_aws_key: string representing the s3 bucket's access key
-    :_secret_key: string representing the s3 bucket's secret key
-    :_bucket: string representing the s3 bucket's name
-    :_region: string representing the s3 bucket's region
+    :s3client: boto3.session.Session.client that represents a connection with s3
+    :bucket: string representing the s3 bucket's name
     :key: string representing the filepath in the s3 bucket
     :sep: string representing the seperation in the compressed csv, default: ';'
     :header: row number to use as the column names, default: 0
     :compression: string representing the type of compression on the file, default: 'gzip'
     """
-    # Connect to the s3 bucket and extract the compressed csv at the key
-    session = boto3.session.Session(region_name=_region)
-    s3client = session.client(
-        's3',
-        aws_access_key_id=_aws_key,
-        aws_secret_access_key=_secret_key,
-    )
-    response = s3client.get_object(Bucket=_bucket, Key=key)
+    response = s3client.get_object(Bucket=bucket, Key=key)
 
     df = pd.read_csv(
         io.BytesIO(response['Body'].read()),
@@ -49,16 +39,55 @@ def import_s3_csv_to_df(
         compression=compression
     )
 
+    # drop duplicate to fix
+    # duplicate 'id' column in the df
+    try:
+        df.drop('id', inplace=True, axis=1)
+    except KeyError:
+        pass
+
     return df
 
 
-def convert_df_to_csv(df, filepath='./', index_label='id', sep=',', encoding='utf-8'):
+def convert_df_to_s3_compressed_csv(
+        df,
+        s3client,
+        bucket,
+        key,
+        sep=';',
+        compression='gzip'
+):
+    """
+    Receives a dataframe and compress it into a csv
+    to the put it in the bucket at the key
+
+    :df: pandas.DataFrame to convert into a compressed csv
+    :s3client: boto3.session.Session.client that represents a connection with s3
+    :bucket: string representing the s3 bucket's name
+    :key: string representing the filepath in the s3 bucket
+    :sep: string representing the seperation in the compressed csv, default: ';'
+    :compression: string representing the type of compression on the file, default: 'gzip'
+    """
+    tmp_file = './tmp_gzip_csv'
+
+    convert_df_to_csv(df, filepath=tmp_file, sep=sep, compression=compression)
+
+    s3client.upload_file(
+        Filename=tmp_file,
+        Bucket=bucket,
+        Key=key,
+    )
+
+    os.remove('./tmp_gzip_csv')
+
+
+def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8', compression=None):
     """
     Convert a given dataframe to a csv at the filepath using
     the other arguments sa specifications
 
     :df: pandas.Dataframe to convert
-    :filepath: string representing what path to save the csv to, default: '.'
+    :filepath: string representing what path to save the csv to
     :index_label: string representing the column label for the index column, default: 'id'
     :sep: string representing the wanted seperation in the csv, default: ','
     :encoding: string representing the encoding to use in the output file, default: 'utf-8'
@@ -71,7 +100,8 @@ def convert_df_to_csv(df, filepath='./', index_label='id', sep=',', encoding='ut
         filepath,
         index_label=index_label,
         sep=sep,
-        encoding=encoding
+        encoding=encoding,
+        compression=compression
     )
 
 
