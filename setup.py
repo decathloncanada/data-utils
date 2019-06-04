@@ -12,6 +12,7 @@ setup(
     description="A data manipulation library",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    license="Apache 2.0",
     url="https://github.com/dktunited/data-utils",
     packages=find_packages(exclude=["tests"]),
     python_requires=">=3.6",
