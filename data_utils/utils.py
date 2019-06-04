@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+"""
+data_utils.utils
+~~~~~~~~~~~~~
+This module contains the private functions of the library.
+"""
 import os
 
 import tablib

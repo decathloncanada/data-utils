@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+"""
+data_utils.geoloc
+~~~~~~~~~~~~~
+This module contains the functions to aid in the geolocation features.
+"""
 from math import radians, cos, sin, asin, sqrt
 
 import numpy as np

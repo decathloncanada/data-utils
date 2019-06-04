@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+"""
+data_utils.df
+~~~~~~~~~~~~~
+This module contains the functions related to dataframe manipulation.
+"""
 import os
 import io
 
