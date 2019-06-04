@@ -1,7 +1,7 @@
 # Data-utils
 In an effort to simplify the AI's team work, this repo will be used to seamlessly acquire the data from the databases.
 
-For now, this module is for a specific use case where we imports a compressed csv from an s3 bucket into a dataframe from pandas or csv format.
+For now, this module is for a specific use case where we import a compressed csv from an s3 bucket into a dataframe from pandas or csv format.
 
 Can also be used alongside django projects to import data inside of a specified model's table.
 
@@ -16,7 +16,7 @@ If you want to contribute to the development, you need the [setuptools](https://
 
 ## Public functions
 ##### `data_utils.df`
-- `import_s3_csv_to_df`: takes in an s3 client and a key and returns a dataframe
+- `import_s3_csv_to_df`: accepts an s3 client and a key and returns a dataframe
 - `convert_df_to_csv`: saves a dataframe to a specified csv filepath
 - `convert_df_to_django_model`: if you use this in a django project, you can directly save a df to a model's table
 - `convert_df_to_s3_compressed_csv`: takes in an s3 client and a df and saves it in s3 as a compressed csv

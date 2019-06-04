@@ -20,7 +20,7 @@ from .utils import(
 def map_df_to_kd_tree(df):
     """
     Maps a dataframe with a latitude and longitude to a KDTree from scipy.spatial
-    This gives access to quick nearest-neighbor lookup
+    This provides quick access to the nearest-neighbour lookup.
 
     :df: pandas.DataFrame with required latitude and longitude
 
