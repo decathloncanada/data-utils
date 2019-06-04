@@ -1,9 +1,10 @@
 import os
 
-from dotenv import load_dotenv
+import pandas as pd
 import boto3
+from dotenv import load_dotenv
 
-import data_utils.df as du  # du for data_utils
+from data_utils.df import convert_df_to_s3_compressed_csv
 
 load_dotenv()
 
@@ -15,10 +16,12 @@ s3client = session.client(
     aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
 )
 
-df = du.import_s3_csv_to_df(
+data = {'col1': [1, 2], 'col2': [3, 4]}
+df = pd.DataFrame(data=data)
+
+convert_df_to_s3_compressed_csv(
+    df,
     s3client=s3client,
     bucket=os.getenv("BUCKET"),
     key=f'Dkt_canada/shawn_test/test_000.gz'
 )
-
-du.convert_df_to_csv(df, filepath='./test.csv')

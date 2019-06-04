@@ -6,12 +6,13 @@ with open("readme.md", "r") as desc:
 
 setup(
     name="data_utils",
-    version="0.2",
+    version="0.3",
     author="Shawn-Philippe Levasseur",
     author_email="shawnphilippe.levasseur@decathlon.com",
     description="A data manipulation library",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    license="Apache 2.0",
     url="https://github.com/dktunited/data-utils",
     packages=find_packages(exclude=["tests"]),
     python_requires=">=3.6",

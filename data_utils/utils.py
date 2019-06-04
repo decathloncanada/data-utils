@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+"""
+data_utils.utils
+~~~~~~~~~~~~~
+This module contains the private functions of the library.
+"""
 import os
 
 import tablib
@@ -17,6 +24,14 @@ def _get_z(phi):
 
 
 def _convert_df_to_dataset(df, last_id):
+    """
+    Helper function to prepare the data to import to django's ORM
+
+    :df: pandas.DataFrame holding the data
+    :last_id: int that represents the next available id in the model's table
+
+    Returns a tablib.dataset
+    """
     # Set the new ids to start with the next available one
     # Change the dataframe into a dictionnary
     # because you can't change it into a Dataset directly
@@ -34,6 +49,11 @@ def _convert_df_to_dataset(df, last_id):
 
 
 def _clear_model_table(model):
+    """
+    Clear specified django's model table
+
+    :model: django.db.models.Model's name. The ORM takes care of which table is associated with it
+    """
     try:
         model.objects.all().delete()
     except Exception as err:
@@ -41,6 +61,11 @@ def _clear_model_table(model):
 
 
 def _create_filepath_if_nonexistent(filepath):
+    """
+    Create a file and the path at filepath
+
+    :filepath: the location of the file, e.g. 'this/path/file'
+    """
     # If the directory doesn't exist, create it
     if not os.path.exists(os.path.dirname(filepath)):
         os.makedirs(os.path.dirname(filepath))
@@ -52,6 +77,10 @@ def _create_filepath_if_nonexistent(filepath):
 
 
 def _setup_django():
+    """
+    Import the import_export module from django for easy import to Django's ORM
+    IF the django_setting_module is set, meaning if it's a django project
+    """
     if os.getenv('DJANGO_SETTINGS_MODULE'):
         from import_export import resources
     else:
