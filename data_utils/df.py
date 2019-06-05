@@ -24,7 +24,7 @@ def import_s3_csv_to_df(s3client,
                         header=0,
                         compression='gzip'):
     """
-    Import a given dataframe to Django's ORM with a specified model
+    Returns a dataframe based on thecompressed csv at the given key in the given bucket
 
     :s3client: boto3.session.Session.client that represents a connection with s3
     :bucket: string representing the s3 bucket's name
