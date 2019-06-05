@@ -12,7 +12,7 @@ Add `git+https://github.com/decathloncanada/data-utils.git` to your requirements
 If you want to contribute to the development, you need the [setuptools](https://github.com/pypa/setuptools) package to be installed on your computer
 
 - You will need to clone this project `git clone git@github.com:decathloncanada/data-utils.git`
-- then, verify it build with `python setup.py install`
+- then, verify that it builds with `python setup.py install`
 
 ## Public functions
 ##### `data_utils.df`
