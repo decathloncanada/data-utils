@@ -10,11 +10,9 @@ from math import radians, cos, sin, asin, sqrt
 import numpy as np
 import scipy.spatial as spatial
 
-from .utils import(
-    _get_x,
-    _get_y,
-    _get_z
-)
+from .utils import(_get_x,
+                   _get_y,
+                   _get_z)
 
 
 def map_df_to_kd_tree(df):
@@ -58,9 +56,11 @@ def calculate_haversine_distance(df, latitude, longitude):
     R = 6371.0  # earths's radius in km
 
     # convert decimal degrees to radians
-    lat1, lon1, lat2, lon2 = map(
-        radians, [df['latitude'], df['longitude'], latitude, longitude]
-    )
+    lat1, lon1, lat2, lon2 = map(radians,
+                                 [df['latitude'],
+                                  df['longitude'],
+                                  latitude,
+                                  longitude])
     dlon = lon2 - lon1
     dlat = lat2 - lat1
 
@@ -68,4 +68,5 @@ def calculate_haversine_distance(df, latitude, longitude):
     a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
     c = 2 * asin(sqrt(a))  # 2 * atan2(sqrt(a), sqrt(1-a))
     d = R * c
+
     return d
