@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-with open("readme.md", "r") as desc:
+with open("README.md", "r") as desc:
     long_description = desc.read()
 
 
@@ -13,7 +13,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="Apache 2.0",
-    url="https://github.com/dktunited/data-utils",
+    url="https://github.com/decathloncanada/data-utils",
     packages=find_packages(exclude=["tests"]),
     python_requires=">=3.6",
     classifiers=[

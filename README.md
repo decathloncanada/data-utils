@@ -6,7 +6,7 @@ For now, this module is for a specific use case where we import a compressed csv
 Can also be used alongside django projects to import data inside of a specified model's table.
 
 ## Installation
-Add `git+ssh://git@github.com/dktunited/data-utils.git` to your requirements.txt file and it will install it when you run `pip install -r requirements`!
+Add `git+https://github.com/decathloncanada/data-utils` to your requirements.txt file and it will install it when you run `pip install -r requirements`!
 
 ## Development
 If you want to contribute to the development, you need the [setuptools](https://github.com/pypa/setuptools) package to be installed on your computer

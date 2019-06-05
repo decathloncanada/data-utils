@@ -11,22 +11,18 @@ import io
 import pandas as pd
 import numpy as np
 
-from .utils import (
-    _clear_model_table,
-    _convert_df_to_dataset,
-    _create_filepath_if_nonexistent,
-    _setup_django
-)
+from .utils import (_clear_model_table,
+                    _convert_df_to_dataset,
+                    _create_filepath_if_nonexistent,
+                    _setup_django)
 
 
-def import_s3_csv_to_df(
-        s3client,
-        bucket,
-        key,
-        sep=';',
-        header=0,
-        compression='gzip'
-):
+def import_s3_csv_to_df(s3client,
+                        bucket,
+                        key,
+                        sep=';',
+                        header=0,
+                        compression='gzip'):
     """
     Import a given dataframe to Django's ORM with a specified model
 
@@ -39,12 +35,10 @@ def import_s3_csv_to_df(
     """
     response = s3client.get_object(Bucket=bucket, Key=key)
 
-    df = pd.read_csv(
-        io.BytesIO(response['Body'].read()),
-        sep=sep,
-        header=header,
-        compression=compression
-    )
+    df = pd.read_csv(io.BytesIO(response['Body'].read()),
+                     sep=sep,
+                     header=header,
+                     compression=compression)
 
     # drop duplicate to fix
     # duplicate 'id' column in the df
@@ -56,14 +50,12 @@ def import_s3_csv_to_df(
     return df
 
 
-def convert_df_to_s3_compressed_csv(
-        df,
-        s3client,
-        bucket,
-        key,
-        sep=';',
-        compression='gzip'
-):
+def convert_df_to_s3_compressed_csv(df,
+                                    s3client,
+                                    bucket,
+                                    key,
+                                    sep=';',
+                                    compression='gzip'):
     """
     Receives a dataframe and compress it into a csv
     to the put it in the bucket at the key
@@ -79,11 +71,9 @@ def convert_df_to_s3_compressed_csv(
 
     convert_df_to_csv(df, filepath=tmp_file, sep=sep, compression=compression)
 
-    s3client.upload_file(
-        Filename=tmp_file,
-        Bucket=bucket,
-        Key=key,
-    )
+    s3client.upload_file(Filename=tmp_file,
+                         Bucket=bucket,
+                         Key=key)
 
     os.remove('./tmp_gzip_csv')
 
@@ -103,13 +93,11 @@ def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8',
 
     df.fillna(0.0, inplace=True)
     df.index = np.arange(1, len(df)+1)
-    df.to_csv(
-        filepath,
-        index_label=index_label,
-        sep=sep,
-        encoding=encoding,
-        compression=compression
-    )
+    df.to_csv(filepath,
+              index_label=index_label,
+              sep=sep,
+              encoding=encoding,
+              compression=compression)
 
 
 def convert_df_to_django_model(df, model, rewrite=False):
