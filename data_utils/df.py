@@ -50,6 +50,24 @@ def import_s3_csv_to_df(s3client,
     return df
 
 
+def list_s3_keys_in_bucket(s3client,
+                           bucket,
+                           prefix=''):
+    """
+    Returns a list of the keys situated at the given prefix in the given bucket
+
+    :s3client: boto3.session.Session.client that represents a connection with s3
+    :bucket: string representing the s3 bucket's name
+    :prefix: string representing the base filepath to search at in the s3 bucket, default: ''
+    """
+    keys = []
+    response = s3client.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
+    for __file in response:
+        keys.append(__file['Key'])
+
+    return keys
+
+
 def convert_df_to_s3_compressed_csv(df,
                                     s3client,
                                     bucket,
