@@ -10,6 +10,7 @@ import io
 
 import pandas as pd
 import numpy as np
+import tablib
 
 from .utils import (_clear_model_table,
                     _convert_df_to_dataset,
@@ -48,6 +49,24 @@ def import_s3_csv_to_df(s3client,
         pass
 
     return df
+
+
+def list_s3_keys_in_bucket(s3client,
+                           bucket,
+                           prefix=''):
+    """
+    Returns a list of the keys situated at the given prefix in the given bucket
+
+    :s3client: boto3.session.Session.client that represents a connection with s3
+    :bucket: string representing the s3 bucket's name
+    :prefix: string representing the base filepath to search at in the s3 bucket, default: ''
+    """
+    keys = []
+    response = s3client.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
+    for csv in response:
+        keys.append(csv['Key'])
+
+    return keys
 
 
 def convert_df_to_s3_compressed_csv(df,
@@ -100,13 +119,17 @@ def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8',
               compression=compression)
 
 
-def convert_df_to_django_model(df, model, rewrite=False):
+def convert_df_to_django_model(df,
+                               model,
+                               rewrite=False,
+                               rows_at_a_time=250):
     """
     Import a given dataframe to Django's ORM with a specified model
 
     :df: pandas.Dataframe to convert
     :model: django.db.models.Model's name. The ORM takes care of which table to put the data in
     :rewrite: boolean representing wether to delete the old entries or not, default: False
+    :rows_at_a_time: int representing the amount of rows to import at the same time, default: 250
     """
     _setup_django()
 
@@ -124,6 +147,9 @@ def convert_df_to_django_model(df, model, rewrite=False):
 
         # Save the data to the database
         p_resource = resources.modelresource_factory(model=model)()
-        p_resource.import_data(dataset)
+        for i in range(0, len(dataset), rows_at_a_time):
+            data = tablib.Dataset(*dataset[i:i+rows_at_a_time],
+                                  headers=dataset.headers)
+            p_resource.import_data(data)
     except Exception as err:
         return print(err)

@@ -6,7 +6,7 @@ with open("README.md", "r") as desc:
 
 setup(
     name="data_utils",
-    version="0.3.1",
+    version="1.0",
     author="Shawn-Philippe Levasseur",
     author_email="shawnphilippe.levasseur@decathlon.com",
     description="A data manipulation library",
