@@ -17,13 +17,16 @@ class TestDfMethods(unittest.TestCase):
         data = {'latitude': [45], 'longitude': [-73]}
         self.df = pd.DataFrame(data=data)
         self.kd_tree = du.map_df_to_kd_tree(self.df)
+        self.exact_location = du.calculate_haversine_distance(self.df, 45, -73)
 
     def test_kd_tree_type(self):
         self.assertIsInstance(self.kd_tree, spatial.KDTree)
 
     def test_calculate_haversine_distance_type(self):
-        distance = du.calculate_haversine_distance(self.df, 43, -73.56)
-        self.assertEqual(type(distance), float)
+        self.assertEqual(type(self.exact_location), float)
+
+    def test_haversine_same_origin(self):
+        self.assertEqual(self.exact_location, 0.0)
 
 
 if __name__ == '__main__':
