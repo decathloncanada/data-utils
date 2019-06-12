@@ -28,7 +28,7 @@ def setUp():
     du.convert_df_to_s3_compressed_csv(df,
                                        s3client=S3CLIENT,
                                        bucket=os.getenv("BUCKET"),
-                                       key=f'Dkt_canada/shawn_test/test_000.gz')
+                                       key=f'test/test.gz')
 
 
 class TestImportS3CsvToDf(unittest.TestCase):
@@ -36,7 +36,7 @@ class TestImportS3CsvToDf(unittest.TestCase):
     def setUp(self):
         self.df = du.import_s3_csv_to_df(s3client=S3CLIENT,
                                          bucket=os.getenv("BUCKET"),
-                                         key=f'Dkt_canada/shawn_test/test_000.gz')
+                                         key=f'test/test.gz')
 
     def test_check_df_type(self):
         self.assertEqual(type(self.df), pd.DataFrame)
@@ -53,7 +53,7 @@ class TestListS3KeysInBucket(unittest.TestCase):
     def setUp(self):
         self.list_keys = du.list_s3_keys_in_bucket(S3CLIENT,
                                                    bucket=os.getenv("BUCKET"),
-                                                   prefix=f'Dkt_canada/shawn_test/')
+                                                   prefix=f'test/')
 
     def test_check_list_type(self):
         self.assertEqual(type(self.list_keys), list)
@@ -62,7 +62,7 @@ class TestListS3KeysInBucket(unittest.TestCase):
         self.assertEqual(len(self.list_keys), 1)
 
     def test_convert_df_to_s3_compressed_csv(self):
-        self.assertTrue('Dkt_canada/shawn_test/test_000.gz' in self.list_keys)
+        self.assertTrue('test/test.gz' in self.list_keys)
 
 
 if __name__ == '__main__':
