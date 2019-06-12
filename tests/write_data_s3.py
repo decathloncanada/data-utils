@@ -16,12 +16,3 @@ s3client = session.client(
     aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
 )
 
-data = {'col1': [1, 2], 'col2': [3, 4]}
-df = pd.DataFrame(data=data)
-
-convert_df_to_s3_compressed_csv(
-    df,
-    s3client=s3client,
-    bucket=os.getenv("BUCKET"),
-    key=f'Dkt_canada/shawn_test/test_000.gz'
-)

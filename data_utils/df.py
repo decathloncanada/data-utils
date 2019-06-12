@@ -11,6 +11,7 @@ import io
 import pandas as pd
 import numpy as np
 import tablib
+from import_export import resources
 
 from .utils import (_clear_model_table,
                     _convert_df_to_dataset,
