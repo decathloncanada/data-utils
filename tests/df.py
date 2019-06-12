@@ -9,8 +9,6 @@ import data_utils.df as du  # du for data_utils
 
 load_dotenv()
 
-# du.convert_df_to_csv(df, filepath='./test.csv')
-
 
 class TestDfMethods(unittest.TestCase):
 
@@ -40,13 +38,13 @@ class TestDfMethods(unittest.TestCase):
                                                    prefix=f'Dkt_canada/shawn_test/')
 
     def test_check_df_type(self):
-        self.assertEqual(type(self.df), pd.DataFrame)  # Check that it's a df
+        self.assertEqual(type(self.df), pd.DataFrame)
 
     def test_count_df_rows(self):
-        self.assertEqual(self.df.shape[0], 5)  # Check that there are 5 rows
+        self.assertEqual(self.df.shape[0], 5)
 
     def test_count_df_columns(self):
-        self.assertEqual(self.df.shape[1], 2)  # Cehck that there are 2 columns
+        self.assertEqual(self.df.shape[1], 2)
 
     def test_check_list_type(self):
         self.assertEqual(type(self.list_keys), list)
