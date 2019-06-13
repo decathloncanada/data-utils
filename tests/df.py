@@ -1,4 +1,5 @@
 import os
+import io
 import unittest
 
 from dotenv import load_dotenv
@@ -63,6 +64,27 @@ class TestListS3KeysInBucket(unittest.TestCase):
 
     def test_convert_df_to_s3_compressed_csv(self):
         self.assertTrue('test/test.gz' in self.list_keys)
+
+
+class TestConvertDfToCsv(unittest.TestCase):
+
+    def setUp(self):
+        self.filepath = '/tmp/test.csv'
+        df = du.import_s3_csv_to_df(s3client=S3CLIENT,
+                                    bucket=os.getenv("BUCKET"),
+                                    key=f'test/test.gz')
+        du.convert_df_to_csv(df,  self.filepath)
+        self.file = open(self.filepath, 'r')
+
+    def test_check_csv_exists(self):
+        self.assertEqual(type(self.file), io.TextIOWrapper)
+
+    def test_check_csv_content(self):
+        self.assertEqual(len(self.file.readlines()), 6)
+
+    def tearDown(self):
+        self.file.close()
+        os.remove(self.filepath)
 
 
 if __name__ == '__main__':
