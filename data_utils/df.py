@@ -11,12 +11,10 @@ import io
 import pandas as pd
 import numpy as np
 import tablib
-from import_export import resources
 
 from .utils import (_clear_model_table,
                     _convert_df_to_dataset,
-                    _create_filepath_if_nonexistent,
-                    _setup_django)
+                    _create_filepath_if_nonexistent)
 
 
 def import_s3_csv_to_df(s3client,
@@ -118,6 +116,13 @@ def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8',
               sep=sep,
               encoding=encoding,
               compression=compression)
+
+
+def _if_django_project_setup_import_export():
+    if os.getenv('DJANGO_SETTINGS_MODULE'):
+        from import_export import resources
+    else:
+        raise Exception('This function can only be used in Django projects.')
 
 
 def convert_df_to_django_model(df,
