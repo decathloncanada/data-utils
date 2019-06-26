@@ -74,14 +74,3 @@ def _create_filepath_if_nonexistent(filepath):
     if not os.path.exists(filepath):
         file = open(filepath, mode='w')
         file.close()
-
-
-def _setup_django():
-    """
-    Import the import_export module from django for easy import to Django's ORM
-    IF the django_setting_module is set, meaning if it's a django project
-    """
-    if os.getenv('DJANGO_SETTINGS_MODULE'):
-        from import_export import resources
-    else:
-        raise Exception('This function can only be used in Django projects.')
