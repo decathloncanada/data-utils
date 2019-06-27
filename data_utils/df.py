@@ -137,7 +137,7 @@ def convert_df_to_django_model(df,
     :rewrite: boolean representing wether to delete the old entries or not, default: False
     :rows_at_a_time: int representing the amount of rows to import at the same time, default: 250
     """
-    _setup_django()
+    _if_django_project_setup_import_export()
 
     if rewrite:
         _clear_model_table(model)
