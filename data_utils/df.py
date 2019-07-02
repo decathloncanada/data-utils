@@ -118,13 +118,6 @@ def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8',
               compression=compression)
 
 
-def _if_django_project_setup_import_export():
-    if os.getenv('DJANGO_SETTINGS_MODULE'):
-        from import_export import resources
-    else:
-        raise Exception('This function can only be used in Django projects.')
-
-
 def convert_df_to_django_model(df,
                                model,
                                rewrite=False,
@@ -137,7 +130,10 @@ def convert_df_to_django_model(df,
     :rewrite: boolean representing wether to delete the old entries or not, default: False
     :rows_at_a_time: int representing the amount of rows to import at the same time, default: 250
     """
-    _setup_django()
+    if os.getenv('DJANGO_SETTINGS_MODULE'):
+        from import_export import resources
+    else:
+        raise Exception('This function can only be used in Django projects.')
 
     if rewrite:
         _clear_model_table(model)
@@ -151,7 +147,6 @@ def convert_df_to_django_model(df,
 
         dataset = _convert_df_to_dataset(df, last_id)
 
-        # Save the data to the database
         p_resource = resources.modelresource_factory(model=model)()
         for i in range(0, len(dataset), rows_at_a_time):
             data = tablib.Dataset(*dataset[i:i+rows_at_a_time],
