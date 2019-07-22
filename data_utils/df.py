@@ -22,7 +22,9 @@ def import_s3_csv_to_df(s3client,
                         key,
                         sep=';',
                         header=0,
-                        compression='gzip'):
+                        compression='gzip',
+                        usecols=None,
+                        dtype=None):
     """
     Returns a dataframe based on thecompressed csv at the given key in the given bucket
 
@@ -32,13 +34,17 @@ def import_s3_csv_to_df(s3client,
     :sep: string representing the seperation in the compressed csv, default: ';'
     :header: row number to use as the column names, default: 0
     :compression: string representing the type of compression on the file, default: 'gzip'
+    :dtype: dictionary {attribute name: object type}
+    :usecols: list of attributes to read from the csv
     """
     response = s3client.get_object(Bucket=bucket, Key=key)
 
     df = pd.read_csv(io.BytesIO(response['Body'].read()),
                      sep=sep,
                      header=header,
-                     compression=compression)
+                     compression=compression,
+                     dtype=dtype,
+                     usecols=usecols)
 
     # drop duplicate to fix
     # duplicate 'id' column in the df
