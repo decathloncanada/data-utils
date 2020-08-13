@@ -5,26 +5,33 @@ data_utils.df
 ~~~~~~~~~~~~~
 This module contains the functions related to dataframe manipulation.
 """
-import os
 import io
+import os
 
-import pandas as pd
+import boto3
+import django.db.models.Model
 import numpy as np
+import pandas as pd
 import tablib
+from typing import List, Union
 
-from .utils import (_clear_model_table,
-                    _convert_df_to_dataset,
-                    _create_filepath_if_nonexistent)
+from .utils import (
+    _clear_model_table,
+    _convert_df_to_dataset,
+    _create_filepath_if_nonexistent,
+)
 
 
-def import_s3_csv_to_df(s3client,
-                        bucket,
-                        key,
-                        sep=';',
-                        header=0,
-                        compression='gzip',
-                        usecols=None,
-                        dtype=None):
+def import_s3_csv_to_df(
+    s3client: boto3.session.Session.client,
+    bucket: str,
+    key: str,
+    sep: str = ";",
+    header: int = 0,
+    compression: Union[str, None] = "gzip",
+    usecols: List = None,
+    dtype: List = None,
+) -> pd.DataFrame:
     """
     Returns a dataframe based on thecompressed csv at the given key in the given bucket
 
@@ -39,26 +46,28 @@ def import_s3_csv_to_df(s3client,
     """
     response = s3client.get_object(Bucket=bucket, Key=key)
 
-    df = pd.read_csv(io.BytesIO(response['Body'].read()),
-                     sep=sep,
-                     header=header,
-                     compression=compression,
-                     dtype=dtype,
-                     usecols=usecols)
+    df = pd.read_csv(
+        io.BytesIO(response["Body"].read()),
+        sep=sep,
+        header=header,
+        compression=compression,
+        dtype=dtype,
+        usecols=usecols,
+    )
 
     # drop duplicate to fix
     # duplicate 'id' column in the df
     try:
-        df.drop('id', inplace=True, axis=1)
+        df.drop("id", inplace=True, axis=1)
     except KeyError:
         pass
 
     return df
 
 
-def list_s3_keys_in_bucket(s3client,
-                           bucket,
-                           prefix=''):
+def list_s3_keys_in_bucket(
+    s3client: boto3.session.Session.client, bucket: str, prefix: str = ""
+) -> List:
     """
     Returns a list of the keys situated at the given prefix in the given bucket
 
@@ -67,19 +76,21 @@ def list_s3_keys_in_bucket(s3client,
     :prefix: string representing the base filepath to search at in the s3 bucket, default: ''
     """
     keys = []
-    response = s3client.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
+    response = s3client.list_objects(Bucket=bucket, Prefix=prefix)["Contents"]
     for csv in response:
-        keys.append(csv['Key'])
+        keys.append(csv["Key"])
 
     return keys
 
 
-def convert_df_to_s3_compressed_csv(df,
-                                    s3client,
-                                    bucket,
-                                    key,
-                                    sep=';',
-                                    compression='gzip'):
+def convert_df_to_s3_compressed_csv(
+    df: pd.DataFrame,
+    s3client: boto3.session.Session.client,
+    bucket: str,
+    key: str,
+    sep: str = ";",
+    compression: Union[str, None] = "gzip",
+):
     """
     Receives a dataframe and compress it into a csv
     to the put it in the bucket at the key
@@ -91,18 +102,23 @@ def convert_df_to_s3_compressed_csv(df,
     :sep: string representing the seperation in the compressed csv, default: ';'
     :compression: string representing the type of compression on the file, default: 'gzip'
     """
-    tmp_file = './tmp_gzip_csv'
+    tmp_file = "./tmp_gzip_csv"
 
     convert_df_to_csv(df, filepath=tmp_file, sep=sep, compression=compression)
 
-    s3client.upload_file(Filename=tmp_file,
-                         Bucket=bucket,
-                         Key=key)
+    s3client.upload_file(Filename=tmp_file, Bucket=bucket, Key=key)
 
-    os.remove('./tmp_gzip_csv')
+    os.remove("./tmp_gzip_csv")
 
 
-def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8', compression=None):
+def convert_df_to_csv(
+    df: pd.Dataframe,
+    filepath: str,
+    index_label: str = "id",
+    sep: str = ",",
+    encoding: str = "utf-8",
+    compression: Union[str, None] = None,
+):
     """
     Convert a given dataframe to a csv at the filepath using
     the other arguments sa specifications
@@ -116,18 +132,22 @@ def convert_df_to_csv(df, filepath, index_label='id', sep=',', encoding='utf-8',
     _create_filepath_if_nonexistent(filepath)
 
     df.fillna(0.0, inplace=True)
-    df.index = np.arange(1, len(df)+1)
-    df.to_csv(filepath,
-              index_label=index_label,
-              sep=sep,
-              encoding=encoding,
-              compression=compression)
+    df.index = np.arange(1, len(df) + 1)
+    df.to_csv(
+        filepath,
+        index_label=index_label,
+        sep=sep,
+        encoding=encoding,
+        compression=compression,
+    )
 
 
-def convert_df_to_django_model(df,
-                               model,
-                               rewrite=False,
-                               rows_at_a_time=250):
+def convert_df_to_django_model(
+    df: pd.DataFrame,
+    model: django.db.models.Model,
+    rewrite: bool = False,
+    rows_at_a_time: int = 250,
+):
     """
     Import a given dataframe to Django's ORM with a specified model
 
@@ -136,10 +156,10 @@ def convert_df_to_django_model(df,
     :rewrite: boolean representing wether to delete the old entries or not, default: False
     :rows_at_a_time: int representing the amount of rows to import at the same time, default: 250
     """
-    if os.getenv('DJANGO_SETTINGS_MODULE'):
+    if os.getenv("DJANGO_SETTINGS_MODULE"):
         from import_export import resources
     else:
-        raise Exception('This function can only be used in Django projects.')
+        raise Exception("This function can only be used in Django projects.")
 
     if rewrite:
         _clear_model_table(model)
@@ -148,15 +168,16 @@ def convert_df_to_django_model(df,
         # Since Django's ORM uses incremental IDs by default
         # we need to go and take the next 'available' one
         # if the query returns none, then we start at 0
-        query = model.objects.values('id').order_by('-id').first()
-        last_id = query['id'] + 1 if query is not None else 0
+        query = model.objects.values("id").order_by("-id").first()
+        last_id = query["id"] + 1 if query is not None else 0
 
         dataset = _convert_df_to_dataset(df, last_id)
 
         p_resource = resources.modelresource_factory(model=model)()
         for i in range(0, len(dataset), rows_at_a_time):
-            data = tablib.Dataset(*dataset[i:i+rows_at_a_time],
-                                  headers=dataset.headers)
+            data = tablib.Dataset(
+                *dataset[i : i + rows_at_a_time], headers=dataset.headers
+            )
             p_resource.import_data(data)
     except Exception as err:
         return print(err)

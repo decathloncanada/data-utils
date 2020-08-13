@@ -7,23 +7,25 @@ This module contains the private functions of the library.
 """
 import os
 
-import tablib
+import django.db.models.Model
+import pandas as pd
 import numpy as np
+import tablib
 
 
-def _get_x(phi, theta):
+def _get_x(phi: np.float64, theta: np.float64) -> np.float64:
     return 6367 * np.cos(phi) * np.cos(theta)
 
 
-def _get_y(phi, theta):
+def _get_y(phi: np.float64, theta: np.float64) -> np.float64:
     return 6367 * np.cos(phi) * np.sin(theta)
 
 
-def _get_z(phi):
+def _get_z(phi: np.float64) -> np.float64:
     return 6367 * np.sin(phi)
 
 
-def _convert_df_to_dataset(df, last_id):
+def _convert_df_to_dataset(df: pd.DataFrame, last_id: int) -> tablib.Dataset:
     """
     Helper function to prepare the data to import to django's ORM
 
@@ -35,10 +37,10 @@ def _convert_df_to_dataset(df, last_id):
     # Set the new ids to start with the next available one
     # Change the dataframe into a dictionnary
     # because you can't change it into a Dataset directly
-    df['id'] = range(last_id, last_id + len(df))
+    df["id"] = range(last_id, last_id + len(df))
     df.fillna(0.0, inplace=True)
     headers = list(df)
-    df = df.to_dict('records')
+    df = df.to_dict("records")
 
     # Put the Dataframe's data into a Dataset
     dataset = tablib.Dataset()
@@ -48,7 +50,7 @@ def _convert_df_to_dataset(df, last_id):
     return dataset
 
 
-def _clear_model_table(model):
+def _clear_model_table(model: django.db.models.Model):
     """
     Clear specified django's model table
 
@@ -60,7 +62,7 @@ def _clear_model_table(model):
         return print(err)
 
 
-def _create_filepath_if_nonexistent(filepath):
+def _create_filepath_if_nonexistent(filepath: str):
     """
     Create a file and the path at filepath
 
@@ -72,5 +74,5 @@ def _create_filepath_if_nonexistent(filepath):
 
     # If the file doesn't exist, create it
     if not os.path.exists(filepath):
-        file = open(filepath, mode='w')
+        file = open(filepath, mode="w")
         file.close()

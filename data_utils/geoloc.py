@@ -7,15 +7,14 @@ This module contains the functions to aid in the geolocation features.
 """
 from math import radians, cos, sin, asin, sqrt
 
+import pandas as pd
 import numpy as np
 import scipy.spatial as spatial
 
-from .utils import(_get_x,
-                   _get_y,
-                   _get_z)
+from .utils import _get_x, _get_y, _get_z
 
 
-def map_df_to_kd_tree(df):
+def map_df_to_kd_tree(df: pd.DataFrame) -> spatial.KDTree:
     """
     Maps a dataframe with a latitude and longitude to a KDTree from scipy.spatial
     This provides quick access to the nearest-neighbour lookup.
@@ -24,16 +23,18 @@ def map_df_to_kd_tree(df):
 
     This function returns a KDTree based on the dataframe
     """
-    phi = np.deg2rad(df['latitude'])
-    theta = np.deg2rad(df['longitude'])
-    df['x'] = _get_x(phi, theta)
-    df['y'] = _get_y(phi, theta)
-    df['z'] = _get_z(phi)
+    phi = np.deg2rad(df["latitude"])
+    theta = np.deg2rad(df["longitude"])
+    df["x"] = _get_x(phi, theta)
+    df["y"] = _get_y(phi, theta)
+    df["z"] = _get_z(phi)
 
-    return spatial.KDTree(df[['x', 'y', 'z']])
+    return spatial.KDTree(df[["x", "y", "z"]])
 
 
-def calculate_haversine_distance(df, latitude, longitude):
+def calculate_haversine_distance(
+    df: pd.DataFrame, latitude: float, longitude: float
+) -> float:
     """
     Calculate the great circle distance between two points
     on Earth (specified in decimal degrees)
@@ -56,16 +57,14 @@ def calculate_haversine_distance(df, latitude, longitude):
     R = 6371.0  # earths's radius in km
 
     # convert decimal degrees to radians
-    lat1, lon1, lat2, lon2 = map(radians,
-                                 [df['latitude'],
-                                  df['longitude'],
-                                  latitude,
-                                  longitude])
+    lat1, lon1, lat2, lon2 = map(
+        radians, [df["latitude"], df["longitude"], latitude, longitude]
+    )
     dlon = lon2 - lon1
     dlat = lat2 - lat1
 
     # haversine formula
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * asin(sqrt(a))  # 2 * atan2(sqrt(a), sqrt(1-a))
     d = R * c
 

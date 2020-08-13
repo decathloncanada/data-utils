@@ -8,7 +8,7 @@
  data-utils is a data manipulation helper library to quicken the work
 
  
-:copyright: (c) 2019 by Shawn-Philippe Levasseur.
+:copyright: (c) 2020 by aicanada@decathlon.net
 :license: Apache 2.0, see LICENSE for more details.
  """
 
