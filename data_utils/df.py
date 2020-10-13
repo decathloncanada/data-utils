@@ -24,7 +24,8 @@ def import_s3_csv_to_df(s3client,
                         header=0,
                         compression='gzip',
                         usecols=None,
-                        dtype=None):
+                        dtype=None,
+                        error_bad_lines=False):
     """
     Returns a dataframe based on thecompressed csv at the given key in the given bucket
 
@@ -44,7 +45,8 @@ def import_s3_csv_to_df(s3client,
                      header=header,
                      compression=compression,
                      dtype=dtype,
-                     usecols=usecols)
+                     usecols=usecols,
+                     error_bad_lines= error_bad_lines)
 
     # drop duplicate to fix
     # duplicate 'id' column in the df
