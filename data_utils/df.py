@@ -25,7 +25,8 @@ def import_s3_csv_to_df(s3client,
                         compression='gzip',
                         usecols=None,
                         dtype=None,
-                        error_bad_lines=False):
+                        error_bad_lines=False,
+                        drop_id=True):
     """
     Returns a dataframe based on thecompressed csv at the given key in the given bucket
 
@@ -51,7 +52,8 @@ def import_s3_csv_to_df(s3client,
     # drop duplicate to fix
     # duplicate 'id' column in the df
     try:
-        df.drop('id', inplace=True, axis=1)
+        if drop_id:
+          df.drop('id', inplace=True, axis=1)
     except KeyError:
         pass
 
